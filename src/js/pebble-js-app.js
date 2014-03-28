@@ -9,8 +9,7 @@ function findPebbleAndSendMessage() {
        displayError,
      { enableHighAccuracy: true, timeout: timeoutVal, maximumAge: 0 }
     );
-  }
-  
+  } 
 }
 
 function getPosition(position) {
@@ -18,12 +17,11 @@ function getPosition(position) {
   var longitude = position.coords.longitude;
   
   sendMessage(latitude, longitude);
-  
-  
 }
 
 function displayError(error) {
-  
+  console.log("something went wrong with the geolocator");
+  console.log(error);
 }
 
 function sendMessage(latitude, longitude) {
@@ -32,18 +30,38 @@ function sendMessage(latitude, longitude) {
   var req = new XMLHttpRequest();
   
   req.open('GET', 'http://illinidumps.com/api/locations/close?latitude='+latitude+'&longitude='+longitude, true);
-  
+
   req.onload = function(e) {
     if(req.readyState == 4) {
       if(req.status == 200) {
         console.log(req.responseText);
         response = JSON.parse(req.responseText);
         msg.init = true;
-        msg.name = response.name;
-        msg.score = "Score: " + response.score;
-        msg.smell = "Smell: " + response.smell_score;
-        msg.crowd = "Crowd: " + response.crowd_score;
-        msg.clean = "Clean: " + response.clean_score;
+
+        if(!response) {
+          msg.name = "Can't find bathroom";
+          msg.score = " "; // hack to clear "GPS fix" msg
+        } else {
+          var name, score, votes, smell_score, crowd_score, clean_score;
+
+          name = response.name;
+          score = response.score;
+          votes = response.votes;
+          smell_score = response.smell_score;
+          crowd_score = response.crowd_score;
+          clean_score = response.clean_score;
+          
+          if(!score) score = "-";
+          if(!smell_score) smell_score = "x.x";
+          if(!crowd_score) crowd_score = "x.x";
+          if(!clean_score) clean_score = "x.x";
+          
+          msg.name = name;
+          msg.score = "Score: " + score + " on " + votes + " votes";
+          msg.smell = "Smelliness: " + smell_score;
+          msg.crowd = "Crowdedness: " + crowd_score;
+          msg.clean = "Cleanliness: " + clean_score;          
+        }
         
         console.log(msg);
         Pebble.sendAppMessage(msg);
@@ -63,7 +81,7 @@ function sendMessage(latitude, longitude) {
 
 Pebble.addEventListener("ready",
   function(e) {
-    console.log("JavaScript app ready and running!");
+    console.log("Javascript app ready and running!");
     findPebbleAndSendMessage();
 
   }

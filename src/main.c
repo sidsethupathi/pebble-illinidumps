@@ -5,10 +5,10 @@ TextLayer *name_layer, *score_layer, *smell_layer, *crowd_layer, *clean_layer;
 static bool dataInited;
 
 static char name[64];
-static char score[16];
+static char score[32];
 static char smell[16];
-static char crowd[16];
-static char clean[16];
+static char crowd[17];
+static char clean[17];
 
 enum {
   MSG_KEY_INIT = 0x0,
@@ -40,6 +40,9 @@ char *translate_error(AppMessageResult result) {
 }
 
 static void in_received_handler(DictionaryIterator *iter, void *context) {
+  text_layer_set_font(score_layer, fonts_get_system_font(FONT_KEY_GOTHIC_18));
+  text_layer_set_text_alignment(score_layer, GTextAlignmentLeft);
+  
   APP_LOG(APP_LOG_LEVEL_DEBUG, "Message received.");
   
   Tuple *init_tuple = dict_find(iter, MSG_KEY_INIT);
@@ -55,7 +58,7 @@ static void in_received_handler(DictionaryIterator *iter, void *context) {
   }
   
   if (score_tuple) {
-      strncpy(score, score_tuple->value->cstring, 16);
+      strncpy(score, score_tuple->value->cstring, 32);
       text_layer_set_text(score_layer, score);
   }
   
@@ -65,12 +68,12 @@ static void in_received_handler(DictionaryIterator *iter, void *context) {
   }
   
   if (crowd_tuple) {
-      strncpy(crowd, crowd_tuple->value->cstring, 16);
+      strncpy(crowd, crowd_tuple->value->cstring, 17);
       text_layer_set_text(crowd_layer, crowd);
   }
   
   if (clean_tuple) {
-      strncpy(clean, clean_tuple->value->cstring, 16);
+      strncpy(clean, clean_tuple->value->cstring, 17);
       text_layer_set_text(clean_layer, clean);
   }
   
@@ -86,13 +89,13 @@ static void in_dropped_handler(AppMessageResult reason, void *context) {
 void handle_init(void) {
   my_window = window_create();
 
-  name_layer = text_layer_create(GRect(0, 0, 144, 20));
-  score_layer = text_layer_create(GRect(0, 20, 144, 20));
-  smell_layer = text_layer_create(GRect(0, 40, 144, 20));
-  crowd_layer = text_layer_create(GRect(0, 60, 144, 20));
-  clean_layer = text_layer_create(GRect(0, 80, 144, 20));
+  name_layer = text_layer_create(GRect(0, 0, 144, 40));
+  score_layer = text_layer_create(GRect(0, 40, 144, 20));
+  smell_layer = text_layer_create(GRect(0, 60, 144, 20));
+  crowd_layer = text_layer_create(GRect(0, 80, 144, 20));
+  clean_layer = text_layer_create(GRect(0, 100, 144, 20));
   
-  text_layer_set_font(name_layer, fonts_get_system_font(FONT_KEY_GOTHIC_18));
+  text_layer_set_font(name_layer, fonts_get_system_font(FONT_KEY_GOTHIC_18_BOLD));
   text_layer_set_font(score_layer, fonts_get_system_font(FONT_KEY_GOTHIC_18));
   text_layer_set_font(smell_layer, fonts_get_system_font(FONT_KEY_GOTHIC_18));
   text_layer_set_font(crowd_layer, fonts_get_system_font(FONT_KEY_GOTHIC_18));
@@ -105,6 +108,12 @@ void handle_init(void) {
   layer_add_child(window_get_root_layer(my_window), text_layer_get_layer(smell_layer));
   layer_add_child(window_get_root_layer(my_window), text_layer_get_layer(crowd_layer));
   layer_add_child(window_get_root_layer(my_window), text_layer_get_layer(clean_layer));
+  
+  text_layer_set_overflow_mode(name_layer, GTextOverflowModeWordWrap);
+  
+  text_layer_set_font(score_layer, fonts_get_system_font(FONT_KEY_GOTHIC_14));
+  text_layer_set_text_alignment(score_layer, GTextAlignmentCenter);
+  text_layer_set_text(score_layer, "Waiting on GPS fix...");
   
   window_stack_push(my_window, true);
   
