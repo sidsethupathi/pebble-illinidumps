@@ -1,0 +1,25 @@
+{
+    "versionLabel": "1.0",
+    "uuid": "759d38e6-9d4f-42c2-893f-4ee7e2aff264",
+    "appKeys": {
+        "name": 1,
+        "crowd": 4,
+        "init": 0,
+        "score": 2,
+        "clean": 5,
+        "smell": 3
+    },
+    "longName": "IlliniDumps",
+    "versionCode": 1,
+    "capabilities": [
+        "location"
+    ],
+    "shortName": "IlliniDumps",
+    "companyName": "Sid sethupathi",
+    "watchapp": {
+        "watchface": false
+    },
+    "resources": {
+        "media": []
+    }
+}
