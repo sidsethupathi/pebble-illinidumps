@@ -77,6 +77,7 @@ static void in_received_handler(DictionaryIterator *iter, void *context) {
       text_layer_set_text(clean_layer, clean);
   }
   
+  light_enable_interaction(); // turns on backlight on timer
   APP_LOG(APP_LOG_LEVEL_DEBUG, "Layers set.");
 
   
