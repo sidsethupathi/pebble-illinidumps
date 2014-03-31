@@ -78,6 +78,7 @@ static void in_received_handler(DictionaryIterator *iter, void *context) {
   }
   
   light_enable_interaction(); // turns on backlight on timer
+  vibes_double_pulse();
   APP_LOG(APP_LOG_LEVEL_DEBUG, "Layers set.");
 
   
